@@ -1,4 +1,4 @@
-# 2 - S3 Bucket Wrapper
+# Objective 2 - S3 Bucket Wrapper
 ## Objective
 Find an open s3 bucket which has the flag in it, then extract the contents of the flag.
 
