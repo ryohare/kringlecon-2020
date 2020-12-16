@@ -21,7 +21,24 @@ Next, it looks like we can manipulate the file, so lets try stripping the encryp
 
 ![Stripped Encryption from Password](img/strip-enc.png)
 
-Attempting the binary indicates that this needs to be run in the main directory to pass. So, in attempting the same bypass on the main binary we find why the lab folder exists. The configuration file is not modifiable. Needed a hint here on what to do next, but really had all the information needed to deduce the next logical step. 
+Attempting the binary indicates that this needs to be run in the main directory to pass. So, in attempting the same bypass on the main binary we find why the lab folder exists. The configuration file is not modifiable. So the next step was to try and find a way to control which config file gets loaded by the binary. The following where tried
+
+1. Manipulating the environment to make it look like the `lab` folder was the current directory and home directory
+2. `strings` out the binary looking for any potential environment override to point to a new config file.
+3. `strings` looking for hidden argv's to pass in
+4. chroot to a new environtment (no sudo access)
+
+Looking at the binary, it has the name `/home/elf/lights` hardcoded into it, likely used to identify if the image loaded is the correct one. This can be patched in the the binary mode, which worked, but as I found out later, was not the correct solve, but its shown here.
+
+## Bin Patch
+Patch the binary to point to a new directory layout. The new path will need to be the same length as the hardcoded value in the binary (`/home/elf/lights`). This can be done by selecting  the replaced `/tmp/eelf/lights` which uses the writable tmp directory.
+
+![Patching Binary with VIM](img/bin-patching.png)
+
+![Success via the Binary Patching](img/bin-patch-ftw.png)
+
+
+Needed a hint here on what to do next, but really had all the information needed to deduce the next logical step. 
 
 1. Established in the first attempt that by removing the `E$` from the password field made the program treat it as not encrypted.
 2. Vaguely aware that the username is also read and printed on the screen as well.
