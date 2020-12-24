@@ -335,3 +335,15 @@ DNS Sample Response
             |  rdata     = '10.6.0.2'
            ns        = None
            ar        = None
+
+
+
+So it worked - Issue i had was I was providing a CNAME which actually caused it to crash background.py
+
+After running the test, it showed that the next step was to go to port 80 and likely request a website. Can figure out the git request using `server.http`.
+
+Now, we need, it appears to backdoor a deb file to get a reverse shell on the machine, or open a bind shell
+
+The request is being executed via curl (user agent).
+
+.

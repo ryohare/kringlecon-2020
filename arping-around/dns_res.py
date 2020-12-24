@@ -30,8 +30,9 @@ def handle_dns_request(packet):
     dns.an=DNSRR(
             rrname=packet[DNSQR].qname,
             rdata=ipaddr,
-            type="CNAME",
-            ttl=82159,
+            #$type="CNAME",
+            type="A",
+            #ttl=8215,
             rclass="IN"
     )
     dns_response = eth / ip / udp / dns
