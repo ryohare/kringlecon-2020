@@ -20,9 +20,9 @@ Pingable from main host
     ARP Reply responding with with MAC for IP 10.10.10.1
 		    2   0.031000 cc:00:10:dc:00:00 → cc:01:10:dc:00:00 ARP 60 10.10.10.1 is at cc:00:10:dc:00:00
 
-	DNS Request
+	DNS Request - tshark
 		    1   0.000000 192.168.170.8 → 192.168.170.20 DNS 74 Standard query 0x75c0 A www.netbsd.org
-	DNS Response
+	DNS Response - tshark
 		    2   0.048911 192.168.170.20 → 192.168.170.8 DNS 90 Standard query response 0x75c0 A www.netbsd.org A 204.152.190.12
 
 
@@ -120,4 +120,218 @@ Success, DNS request is:
 
 From the capture, it looks like the victim is trying to resolve an FTP server. So, we'll serve them a DNS record pointing back to the attacker (us) and wait for the FTP connection next.
 
+UDP packet received
+###[ Ethernet ]### 
+  dst       = 02:42:0a:06:00:04
+  src       = 4c:24:57:ab:ed:84
+  type      = IPv4
+###[ IP ]### 
+     version   = 4
+     ihl       = 5
+     tos       = 0x0
+     len       = 60
+     id        = 1
+     flags     = 
+     frag      = 0
+     ttl       = 64
+     proto     = udp
+     chksum    = 0x5a4d
+     src       = 10.6.6.35
+     dst       = 10.6.6.53
+     \options   \
+###[ UDP ]### 
+        sport     = 34972
+        dport     = domain
+        len       = 40
+        chksum    = 0xb1c1
+###[ DNS ]### 
+           id        = 0
+           qr        = 0
+           opcode    = QUERY
+           aa        = 0
+           tc        = 0
+           rd        = 1
+           ra        = 0
+           z         = 0
+           ad        = 0
+           cd        = 0
+           rcode     = ok
+           qdcount   = 1
+           ancount   = 0
+           nscount   = 0
+           arcount   = 0
+           \qd        \
+            |###[ DNS Question Record ]### 
+            |  qname     = 'ftp.osuosl.org.'
+            |  qtype     = A
+            |  qclass    = IN
+           an        = None
+           ns        = None
+           ar        = None
 
+
+DNS Sample Response
+###[ DNS ]###
+  id        = 0				//set from packet
+  qr        = 1				//?
+  opcode    = QUERY  		//?
+  aa        = 0				//?
+  tc        = 0				//?
+  rd        = 1				//?
+  ra        = 1				//set to 1
+  z         = 0				//?
+  ad        = 0				//?
+  cd        = 0				//?
+  rcode     = ok			//?
+  qdcount   = 1				// set to 1 - query record from the request
+  ancount   = 5				// set to 1
+  nscount   = 0				//?
+  arcount   = 0				//?
+  \qd        \
+   |###[ DNS Question Record ]###
+   |  qname     = 'www.thepacketgeek.com.'
+   |  qtype     = A
+   |  qclass    = IN
+  \an        \
+   |###[ DNS Resource Record ]###
+   |  rrname    = 'www.thepacketgeek.com.'
+   |  type      = CNAME
+   |  rclass    = IN
+   |  ttl       = 299
+   |  rdlen     = None
+   |  rdata     = 'thepacketgeek.github.io.'
+   |###[ DNS Resource Record ]###
+   |  rrname    = 'thepacketgeek.github.io.'
+   |  type      = A
+   |  rclass    = IN
+   |  ttl       = 3599
+   |  rdlen     = None
+   |  rdata     = 185.199.108.153
+   |###[ DNS Resource Record ]###
+   |  rrname    = 'thepacketgeek.github.io.'
+   |  type      = A
+   |  rclass    = IN
+   |  ttl       = 3599
+   |  rdlen     = None
+   |  rdata     = 185.199.109.153
+   |###[ DNS Resource Record ]###
+   |  rrname    = 'thepacketgeek.github.io.'
+   |  type      = A
+   |  rclass    = IN
+   |  ttl       = 3599
+   |  rdlen     = None
+   |  rdata     = 185.199.110.153
+   |###[ DNS Resource Record ]###
+   |  rrname    = 'thepacketgeek.github.io.'
+   |  type      = A
+   |  rclass    = IN
+   |  ttl       = 3599
+   |  rdlen     = None
+   |  rdata     = 185.199.111.153
+  ns        = None
+  ar        = None
+
+
+
+.###[ Ethernet ]### 
+  dst       = 02:42:0a:06:00:02
+  src       = 4c:24:57:ab:ed:84
+  type      = IPv4
+###[ IP ]### 
+     version   = 4
+     ihl       = 5
+     tos       = 0x0
+     len       = 60
+     id        = 1
+     flags     = 
+     frag      = 0
+     ttl       = 64
+     proto     = udp
+     chksum    = 0x5a4d
+     src       = 10.6.6.35
+     dst       = 10.6.6.53
+     \options   \
+###[ UDP ]### 
+        sport     = 58168
+        dport     = domain
+        len       = 40
+        chksum    = 0x5725
+###[ DNS ]### 
+           id        = 0
+           qr        = 0
+           opcode    = QUERY
+           aa        = 0
+           tc        = 0
+           rd        = 1
+           ra        = 0
+           z         = 0
+           ad        = 0
+           cd        = 0
+           rcode     = ok
+           qdcount   = 1
+           ancount   = 0
+           nscount   = 0
+           arcount   = 0
+           \qd        \
+            |###[ DNS Question Record ]### 
+            |  qname     = 'ftp.osuosl.org.'
+            |  qtype     = A
+            |  qclass    = IN
+           an        = None
+           ns        = None
+           ar        = None
+
+.###[ Ethernet ]### 
+  dst       = 4c:24:57:ab:ed:84
+  src       = 02:42:0a:06:00:02
+  type      = IPv4
+###[ IP ]### 
+     version   = 4
+     ihl       = None
+     tos       = 0x0
+     len       = None
+     id        = 1
+     flags     = 
+     frag      = 0
+     ttl       = 64
+     proto     = udp
+     chksum    = None
+     src       = 10.6.6.53
+     dst       = 10.6.6.35
+     \options   \
+###[ UDP ]### 
+        sport     = domain
+        dport     = 33298
+        len       = None
+        chksum    = None
+###[ DNS ]### 
+           id        = 0
+           qr        = 0
+           opcode    = QUERY
+           aa        = 0
+           tc        = 0
+           rd        = 1
+           ra        = 0
+           z         = 0
+           ad        = 0
+           cd        = 0
+           rcode     = ok
+           qdcount   = 1
+           ancount   = 1
+           nscount   = 0
+           arcount   = 0
+           \qd        \
+            |###[ DNS Question Record ]### 
+            |  qname     = 'ftp.osuosl.org.'
+            |  qtype     = A
+            |  qclass    = IN
+           \an        \
+            |###[ DNS Resource Record ]### 
+            |  rrname    = 'ftp.osuosl.org.'
+            |  type      = CNAME
+            |  rclass    = IN
+            |  ttl       = 0
+            |  rdlen     = None
+            |  rdata     = '10.6.0.2'
+           ns        = None
+           ar        = None
