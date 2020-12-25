@@ -328,7 +328,7 @@ DNS Sample Response
            \an        \
             |###[ DNS Resource Record ]### 
             |  rrname    = 'ftp.osuosl.org.'
-            |  type      = CNAME
+            |  type      = A 
             |  rclass    = IN
             |  ttl       = 0
             |  rdlen     = None
@@ -346,4 +346,4 @@ Now, we need, it appears to backdoor a deb file to get a reverse shell on the ma
 
 The request is being executed via curl (user agent).
 
-.
+The file to exfil is at: /NORTH_POLE_Land_Use_Board_Meeting_Minutes.txt.
