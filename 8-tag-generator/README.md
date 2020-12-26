@@ -1,6 +1,6 @@
 
 ## Testing
-Used ubuntu docker, the likely victim machine. Created a sample zip file using relative file paths (../var/www/html) to attempt tp plant web shell in the nginx web root. Required additonal flags to unzip, `unzip :-` to make it respect relative paths. This would need to be tested in the ruby app.
+Used ubuntu docker, the likely victim machine. Created a sample zip file using relative file paths (../var/www/html) to attempt tp plant web shell in the nginx web root. Required additonal flags to unzip, `unzip -:` to make it respect relative paths. This would need to be tested in the ruby app.
 
 Sample ruby app mirroring the zip handler seen in the leaked source code to build to test its handling of relative zip file paths (`temp.rb`). In testing, it was found to respect relative paths.
 
