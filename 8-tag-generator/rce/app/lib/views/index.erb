@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+  <script src="js/fabric.min.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="parentElement">
+    <div class="error-msg">
+      <h2>ERROR</h2>
+      <div class="error-text">Error msg</div>
+      <button>Close</button>
+    </div>
+    <canvas id="c" width="600" height="317"></canvas>
+    <ul class="templates">
+      <li data-template="blank"><p>Blank</p><img src="images/templates/blank.jpg" /></li>
+      <li data-template="red"><p>Jack Frost</p><img src="images/templates/red.jpg" /></li>
+      <li data-template="tan"><p>Geometric</p><img src="images/templates/tan.jpg" /></li>
+    </ul>
+    <ul class="clipart closed">
+      <li><img src="images/kc3.png" /></li>
+      <li><img src="images/hhc.png" /></li>
+      <li><img src="images/logo_.png" /></li>
+      <li><img src="images/kringle_logo_white.png" /></li>
+      <li><img src="images/kringle_logo_red.png" /></li>
+      <li><img src="images/north_pole.png" /></li>
+      <li><img src="images/santa.png" /></li>
+      <li><img src="images/hen1.png" /></li>
+      <li><img src="images/hen2.png" /></li>
+      <li><img src="images/hen3.png" /></li>
+      <li><img src="images/jack.png" /></li>
+      <li><img src="images/cranpi.png" /></li>
+      <li><img src="images/proxmark.png" /></li>
+      <li><img src="images/snowflake.png" /></li>
+      <li><img src="images/christmas-tree.png" /></li>
+      <li><img src="images/19.png" /></li>
+      <li><img src="images/greenbulb.png" /></li>
+      <li><img src="images/redbulb.png" /></li>
+      <li><img src="images/yellowbulb.png" /></li>
+      <li><img src="images/nut.png" /></li>
+      <li><img src="images/santa_bag_small.png" /></li>
+      <li><img src="images/map.png" /></li>
+      <li><img src="images/snowflake2.png" /></li>
+      <li><img src="images/candycane.png" /></li>
+      <li><img src="images/card.png" /></li>
+    </ul>
+    <div class="controls">
+      <div class="image-controls">
+        <button class='addImage'>
+          <div class="icon add-clipart"></div>
+          <span>Show Clipart</span>
+        </button>
+        <form class="uploadForm" method="post" enctype="multipart/form-data">
+          <input type="file" name="my_file[]" id="file-1" class="inputfile inputfile-1" data-multiple-caption="{count} files selected" multiple />
+          <label for="file-1"><div class="icon upload-image"></div><span>Select file(s)</span></label>
+        </form>
+      </div>
+      <div class="position-controls">
+        <button class="moveBackward" title="Move Backward"></button>
+        <button class="moveForward" title="Move Forward"></button>
+        <button class="moveToBack" title="Send to Back"></button>
+        <button class="moveToFront" title="Send to Front"></button>
+      </div>
+      <div class="text-controls">
+        <button class='addtext'>
+          <div class="icon add-text"></div>
+          <span>Add Text</span>
+        </button>
+        <select class="font-list">
+          <option value=''></option>
+        </select>
+        <label for="color-picker">Select color:</label><input id="color-picker" class="color-picker" type="color" id="html5colorpicker" value="#000000" />
+      </div>
+      <div class="card-controls">
+        <button class="clearBtn"><div class="icon clear"></div><span>Clear</span></button>
+        <button class="saveBtn"><div class="icon save"></div><span>Save Tag</span></button>
+      </div>
+    </div>
+  </div>
+  <script src="js/app.js"></script>  
+</body>
+</html>
