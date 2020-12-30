@@ -1,0 +1,13 @@
+The first byte to change is on slide 194 of the presentation.
+
+Switch to the other document embedded in the PDF file. Doing this reveals a new file.
+
+Next, reading the content of the file indicates that Jack should receive the highest possible negative score. In the block chain, it is currently set to 0xFFFFFFFF (max) and set to 0x1 (Good) which should be set to 0x0, naughty.
+
+2 two bytes down.
+
+2 more to go.
+
+Mention of a photo. There is a .bin file attached to the block chain. Could this be something like a prefix for something, or just a mangled image file itself?
+
+
