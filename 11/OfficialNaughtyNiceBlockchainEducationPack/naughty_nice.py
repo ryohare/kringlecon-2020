@@ -439,19 +439,24 @@ if __name__ == '__main__':
 #
     with open('official_public.pem', 'rb') as fh:
         official_public_key = RSA.importKey(fh.read())
-    c2 = Chain(load=True, filename='blockchain.dat')
+    c2 = Chain(load=True, filename='block_129459.rc1')
 
-    print('C2: Block chain verify: %s' % (c2.verify_chain(official_public_key)))
-    #print(c2.blocks[0])
+    #print('C2: Block chain verify: %s' % (c2.verify_chain(official_public_key)))
+    print(c2.blocks[0])
     #c2.blocks[0].dump_doc(1)
+
+    import hashlib
+    m = hashlib.sha256()
+    m.update(c2.blocks[0].block_data_signed())
+    print("SHA1: {}".format(m.hexdigest()))
+    
+    """
     import hashlib
     for b in c2.blocks:
-       """
        #print("{}:{}:{}".format(b.rid,b.score,b.doc_count))
        if b.rid == 527:
           print(b)  
           b.dump_doc(1)
-       """
        m = hashlib.sha256()
        m.update(b.block_data_signed())
        #print("{}:{}".format(b.index,m.hexdigest()))
@@ -466,6 +471,7 @@ if __name__ == '__main__':
            print(b)
            #print(b.dump_doc(1))
            #print(b.dump_doc(2))
+    """
     """
     from mt19937predictor import MT19937Predictor
 
@@ -485,4 +491,4 @@ if __name__ == '__main__':
 
     for i in range (1,10):
         print("{}:{:x}".format(i+pass_i,pd.getrandbits(64)))
-        """
+    """
