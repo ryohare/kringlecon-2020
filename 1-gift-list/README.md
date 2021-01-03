@@ -1,0 +1,2 @@
+# Obfuscated Gift List
+In this challenge, a gift list is presented in an image which has been obfuscated with a swirl image effect. The image needs to be unswiriled which will reveal the names and items on the list. 
