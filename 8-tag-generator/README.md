@@ -35,14 +35,16 @@ Doing static analysis on the source code, important information and vulnerabilit
 After reviewing the goals, to disclose a specific environment variable it seemed possible to do this with just and LFI. The `/proc` directory on the filesystem holds all the runtime and environment information for all the running processes including the one the LFI is executing in. Within `/proc` there is a link to the currently running process, `/proc/self` linking to the proper pid. Within each pid folder, there is an environment file, `/proc/self/environ`, which has all the environment variables defined for the running process. The contents of this file can be retrieved to solve the challenge.
 ![Environ File](img/eniron_via_get.png)
 
+The value of the environment variable is `JackFrostWasHere`
+
 # Extra Credit
 ## Trying RCE
 Looking at the command injection vulnerability, it looks that some portion of the input to a `system` call is user controllable. In testing, it was discovered that the portion of the filename starting at the `.` in the file extension. Furthermore, the file extension appears to be checked if it is a `png`. Code analysis shows this constraint is not true, but appeared to be during testing against the production web app based on the responses. Furthermore, code analysis shows the command injection is blind. However, coupled with the LFI, results of commands can be piped to a file and pulled down later.
 
 Testing against the production web app proved difficult to construct and debug an appropriate payload. Thus, using the LFI, copies of the files needed to run the app were pulled down and a test environment was built inside [docker](rce/Dockerfile). This environment instrumented the code to get additional debug information to help build the payload. After much testing, a payload was constructed which would trigger the command injection. using the command `set>jg`, the environment was dumped which would yeiled the environment variable described in the goal. This also showed where the file would be generated (`/tmp`).
 
-![Command Injection](img/)
-![Command Injection Results](img/)
+![Command Injection](img/rce.png)
+![Command Injection Results](img/env_via_rce.png)
 
 ## Trying Zip
 Based on the source code, there is a potential zip directory path traversal vulnerability in the code. The first step was to verify if the zip library processed relative paths. It was done as described below.
