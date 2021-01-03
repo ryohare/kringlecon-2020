@@ -1,0 +1,52 @@
+The first byte to change is on slide 194 of the presentation.
+
+Switch to the other document embedded in the PDF file. Doing this reveals a new file.
+
+Next, reading the content of the file indicates that Jack should receive the highest possible negative score. In the block chain, it is currently set to 0xFFFFFFFF (max) and set to 0x1 (Good) which should be set to 0x0, naughty.
+
+2 two bytes down.
+
+2 more to go.
+
+Mention of a photo. There is a .bin file attached to the block chain. Could this be something like a prefix for something, or just a mangled image file itself?
+
+Looking at slide  109, it talks about changing the 10th character of stuff.
+
+The 10 character of the second block is the sign byte for the naughty nice list.
+
+If we set the prefix to be like slide 113, then the 10th char would start by being this byte.
+
+0x4A = Location on slide
+0x4A = Sign byte within block. - This characteristic is a +1 for the collision calculation so if the original value was 0x00, then with would flip to 0x01 as desired.
+
+That would imply that the next byte flip with be -1, and would be in the next block in the binary blob (probably added there for padding purposes).
+
+0x8A = Location slide
+0x8A = 0xD6 -> -1 -> 0xD5
+
+Next rule (slide 114), Prefix length needs to be a multiple of 4
+
+Last block is special - back to slide 113
+
+0xB0 -> Still lands within the binary blob area
+
+### restarting
+
+ooking back at the unicol. If the choosen prefix is the first 64 bytes, which is some fixed stuff which cannot be changed, then the first change in MOVING from GOOD to BAD would be the GOOD byte at 0x49 would be +1, making the bad byte value 0x01, which is what the attacker would want. This means that the second modified byte would call in the binary blob section. This, in MOVING from GOOD to BAD would get -1.
+
+So, to UNDO the Unicol on the current tampered block
+0x49 -= 1 >> 0x01 -> 0x00
+0xC9 += 1 >> 0xD7 -> 0xD8
+
+### PDF
+There is extra data after the %%EOF in the file. Maybe this is an artifact of the Unicol for the PDF. Maybe this problem is really 2 problems, 1 for the whole block, and the other for the PDF. However, the MD5 is calculated for the whole block in chain
+
+In as per the hash_n_sign function, the md5 is taken over the data portion of the code, this would exclude the signature. So, does the file format end after the last attachement?
+
+The signed portion of the data block is defined in block_data. It ends at the previous hash field which is defined in load_block and is 32 bytes long. The current hash and the signature are not included in the md5 collision data.
+
+Tested the collision with two sample PDFs pulled from the block chain. The collisions via `pdf.py` script causes two byte flips, 0x49+1 and 0x89-1.
+
+Within the PDF in the first byte changed via the +1 is 0x3F. Moving one block forward would put the change in the 'comment' area after the catalog. Putting this in the context of the block, it is aligned however with the '9th' column of the other byte switch at position 0x49.
+
+

@@ -1,0 +1,14 @@
+MD5 differential path toolbox
+Copyright (C) 2009 Marc Stevens
+http://homepages.cwi.nl/~stevens/
+
+delta_m[2] = [!8!]
+In-block prefix words: 0
+
+Parsed path:
+Q-3:	|00100111 10000100 11010001 10101101|
+Q-2:	|01001111 00111000 10110000 10001100|
+Q-1:	|00101010 01010001 01010101 10110011|
+Q0:	|00111110 01000000 11111100 10110000| ok p=1
+Q1:	|........ ........ ........ ........|
+Saving data/path_prefix.bin...done.
