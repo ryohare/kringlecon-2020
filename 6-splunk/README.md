@@ -78,7 +78,7 @@ Firts find the index this data is in the same as question 4. Looking at the spec
 ### Answer
 3648
 
-## Question 6 - 
+## Question 6 - Whats the Batch File Run via Run Keys
 Need to figure out the technique which abuses registry run keys. Continuing the list from question 3.
 * T1105 - Ingress Tool Transfer
 * T1106 - Native API
@@ -114,6 +114,8 @@ Provided cipher text and the algorithm which needs to be cracked.
 
 Base64 Encoded CT: `7FXjP1lyfKbyDK/MChyf36h7`
 Alg: RC4
+
+The RC4 password is included in the end of the Kringlecon 3 talk Adversay Emulation and Automation.
 
 ## Answer
 The Lollipop Guild
