@@ -1,9 +1,7 @@
 # Objective 1 - Uncover Santa's Gift List
 In this challenge, a gift list is presented in an image which has been obfuscated with a swirl image effect. The image needs to be unswirled which will reveal the names and items on the list. This is done is Photopea.
-
 ![Twirl Command](1-gift-list/img/twirl_cmd.png)
 ![Angle Adjusted](1-gift-list/img/angle_adjust.png)
-
 The answer is revealed to be `Proxmark`
 
 # Objective 2 - Investigate S3 Bucket
@@ -217,7 +215,7 @@ Over thought it as per the hints. They maintain an index which is where they wan
 2020-11-30T17:44:15Z
 
 ## Question 5 - Whats the Process ID of the use of WindowsAudioDevice-Powershell-Cmdlet
-First find the index this data is in the same as question 4. Looking at the specified [user's github](https://github.com/frgnca?tab=repositories), there is only one that seems to be likely to be used, `AudioDeviceCmdlets`. Looking at the Atomic Red Team repository, we find T1123 is an audio capture test and it is present as one of the indexes in this test suite. It is likely that this is the test the question is about. 
+First find the index this data is in the same as question 4. Looking at the specified user's github https://github.com/frgnca, there is only one that seems to be likely to be used, `AudioDeviceCmdlets`. Looking at the Atomic Red Team repository, we find T1123 is an audio capture test and it is present as one of the indexes in this test suite. It is likely that this is the test the question is about. 
 ![Audio Driver Access](6-splunk/img/q5_success.png)
 ### Answer
 3648
@@ -487,7 +485,7 @@ The DNS request was dumped in a modified version of `dns_res.py` to see fields i
 
 ```
 ### DNS Response
-The ARP and UDP portions of the packets where pretty straight forward to pull from the incoming packet and populate. The DNS response for the most part was just copied from the initial request, the only section being added is the answer field via a `DNSRR`. In this case, the response will want to respond with and `A` record and the `rdata` set to the attacker legitimate IP address. Fun fact, if you pass `type="CNAME"` rather than `A`, the [challenge crashes](https://github.com/CounterHack/HolidayHack2020/issues/34).
+The ARP and UDP portions of the packets where pretty straight forward to pull from the incoming packet and populate. The DNS response for the most part was just copied from the initial request, the only section being added is the answer field via a `DNSRR`. In this case, the response will want to respond with and `A` record and the `rdata` set to the attacker legitimate IP address. Fun fact, if you pass `type="CNAME"` rather than `A`, the challenge crashes.
 ```
 ###[ DNS ]### 
            id        = 0
@@ -534,7 +532,7 @@ However, the packet captures did not capture the actual HTTP request, so the pyt
 ![Success 2](9-arping-around/img/arp_and_dns_spoof_w_http_server.png)
 
 ## HTTP Response Poisoning
-Now that the HTTP response is known, a malicious payload can be constructed to push malicious code to the victim. The server is requesting a `.deb` file which is a debian installable package. Likely, given the challenge, once the package is pulled down, the victim will install the package (e.g. `dpkg -i <DPKG.deb>`). This will require root permissions so if code can be embedded into the dpkg then it will execute as root. I've done package manipulation before via [RPM](https://github.com/ryohare/cheatsheets/blob/master/rpmsuid.md), so the same is possible with dpkg, just requires some research. Going back to some interesting things observed during initial enumeration, there is a debs folder with a bunch of dpkg installation files. Poking around the box, most are not installed meaning they must be their for another reason. Likely to provide a base dpkg to embed malicious code. Just doing some basic thinking, the netcat package can/will be used because it will give uas a potential vector for data exfiltration client side in the case the victim machine doesn't have netcat installed.
+Now that the HTTP response is known, a malicious payload can be constructed to push malicious code to the victim. The server is requesting a `.deb` file which is a debian installable package. Likely, given the challenge, once the package is pulled down, the victim will install the package (e.g. `dpkg -i <DPKG.deb>`). This will require root permissions so if code can be embedded into the dpkg then it will execute as root. Going back to some interesting things observed during initial enumeration, there is a debs folder with a bunch of dpkg installation files. Poking around the box, most are not installed meaning they must be their for another reason. Likely to provide a base dpkg to embed malicious code. Just doing some basic thinking, the netcat package can/will be used because it will give uas a potential vector for data exfiltration client side in the case the victim machine doesn't have netcat installed.
 ### Getting GET headers
 A little more recon to be done before attempting the attack. Want to know the HTTP headers on the GET request incase there is any useful information. This can be grabbed via tcpdump, logging the requests then viewing them in ascii.
 ```bash
@@ -545,7 +543,7 @@ tcpdump -nnr capt.pcap -A | less
 All that really told is that curl is the user-agent so this is probably a script (shocking).
 
 ### Making a Malicious Deb
-Found [this](https://github.com/UndeadSec/Debinject) resource which helped in stepping through the malicious deb creation process. Basically, the gist is that here is a `postinst` script which runs post installation to do processing on the new binaries. This script, if we control the package is remote code execution. So, code will be embedded here. Below are the shell commands with annotations, run on the challenge console to create the malicious package.
+Basically, the gist is that here is a `postinst` script which runs post installation to do processing on the new binaries. This script, if we control the package is remote code execution. So, code will be embedded here. Below are the shell commands with annotations, run on the challenge console to create the malicious package.
 ```bash
 cd debs
 
@@ -597,7 +595,7 @@ First, in the narrative of the game, using the santavator with authorization dem
 
 Knowing this, the click handler code can be found by tracing the element in the website's DOM through to the Javascript. After doing this trace, the code which executes the click handler can be isolated as seen below.
 
-![Click Handler](img/fingerprint_click_handler.png)
+![Click Handler](10-fingerprint-bypass/img/fingerprint_click_handler.png)
 
 ## Bypassing
 Inspecting the code, there is a call to `hashToken('santa')` in an if block which is likely the authorization event. This would indicate the authorization is occurring client side. It is possible then to modify the running javascript in the browser and remove this check. This functionality is available in standard Chrome and Firefox developer edition. The screen shots below show the modification in Chrome.
