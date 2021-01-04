@@ -1,10 +1,11 @@
-# Splunk
+# Objective 5 - Splunk Challenge
+This challenge is to answer a series of questions given a provided Splunk dataset. After completion, an encrypted value holds the flag which needs to be entered to complete the challenge. The password for the encrypted string can be guessed by watching the Splunk talk from this year's Kringelcon.
 
 ## Question 1 - Total Unique ATTACk Techniques
 Run the specific splunk query to get the list if indexes. Copy and paste the results to a text file and use unix command line tools to process the data to the correct answer.
 
 ```splunk
-| tstats count where index=t* by index
+| stats count where index=t* by index
 ```
 Copy and paste these results into rs.txt
 ```bash
@@ -13,7 +14,7 @@ cat rs.txt | awk '{print $2}' | cut -d - -f 1 | sort | uniq | cut -d '.' -f 1 | 
 ### Answer
 13
 
-## Question 2 - Two Indes for Technique T1059.003
+## Question 2 - Two Indexes for Technique T1059.003
 Just read the data from the splunk query results from question 1.
 ### Answer
 t1059.003-main t1059.003-win
@@ -61,7 +62,7 @@ index=t1105-* cmdline powershell
 ![Powershell Events](img/getting_powershell_events.png)
 
 3. Find Tests
-Looking through the results, the 4th event down is a powershell invocation using base64 script body, often times used in powershell bypasses. This seems like a likely candidiate. Grab the payload and look at it. Start stepping through the encoded payloads. It starts to become clear invoke-powershell is being used to execute these tests. Therefore, we need to find the actual invokation of the test. Somethinglike Invoke-Atomicds T1105
+Looking through the results, the 4th event down is a powershell invocation using base64 script body, often times used in powershell bypasses. This seems like a likely candidate. Grab the payload and look at it. Start stepping through the encoded payloads. It starts to become clear invoke-powershell is being used to execute these tests. Therefore, we need to find the actual invocation of the test. Something like Invoke-Atomics T1105
 ![Atomic Red Team Detection](img/invoke-powershell-detected.png)
 The invocation was discovered shortly after
 ![T1105](img/t1105_invocation.png)
@@ -73,7 +74,7 @@ Over thought it as per the hints. They maintain an index which is where they wan
 2020-11-30T17:44:15Z
 
 ## Question 5 - Whats the Process ID of the use of WindowsAudioDevice-Powershell-Cmdlet
-Firts find the index this data is in the same as question 4. Looking at the specified [user's github](https://github.com/frgnca?tab=repositories), there is only one that seems to be likely to be used, `AudioDeviceCmdlets`. Looking at the Atomic Red Team repository, we find T1123 is an audio capture test and it is present as one of the indexes in this test suite. It is likely that this is the test the question is about. 
+First find the index this data is in the same as question 4. Looking at the specified [user's github](https://github.com/frgnca?tab=repositories), there is only one that seems to be likely to be used, `AudioDeviceCmdlets`. Looking at the Atomic Red Team repository, we find T1123 is an audio capture test and it is present as one of the indexes in this test suite. It is likely that this is the test the question is about. 
 ![Audio Driver Access](img/q5_success.png)
 ### Answer
 3648
@@ -96,17 +97,18 @@ Likely the file we are looking for to refine the query
 
 Well that didnt work. Went about it a different way.
 
-Any batch file included has to be part of the test repo. So, going to the test and looking at the markdown files, looked at each one for the run keys tests. Only found one wich used a batch file. Went the patch file and entered the data which was correct.
+Any batch file included has to be part of the test repo. So, going to the test and looking at the markdown files, looked at each one for the run keys tests. Only found one which used a batch file. Went the patch file and entered the data which was correct.
 ### Answer
 quser
 
 https://github.com/redcanaryco/atomic-red-team/blob/master/atomics/T1547.001/T1547.001.md#atomic-test-3---powershell-registry-runonce
 
 https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/ARTifacts/Misc/Discovery.bat
-## Question 7 - 
+## Question 7 - Get the Cert For the Server
+The certificate is a recognized field in the splunk data model so it can easily be filtered on for the specific host.
 
 ![Success](img/cert_success.png)
-### Anser
+### Answer
 55FCEEBB21270D9249E86F4B9DC7AA60
 
 ## Final Question

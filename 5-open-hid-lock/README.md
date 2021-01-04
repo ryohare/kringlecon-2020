@@ -1,4 +1,4 @@
-# Open the HID Lock
+# Objective 5 - Open HID Lock
 This challenge requires the collection of HID card signatures from the elves around the castle using a Proxmark 3. Once enough HID card signatures have been stolen via the Proxymark, one can be selected with the lowest ID value and thus most likely to be the most permissive. Once doing that, the door opens and the area is revealed.
 
 ## Collected Codes

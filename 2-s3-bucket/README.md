@@ -1,9 +1,8 @@
-# Objective 2 - S3 Bucket Wrapper
-## Objective
-Find an open s3 bucket which has the flag in it, then extract the contents of the flag.
+# Objective 2 - Investigate S3 Bucket
+This challenge is to find an open s3 bucket which has the flag in it, then extract the contents of the flag and submit for the answer. This is done with the tool `bucket_finder.rb`. Extract the flag is done by following the chain of various compression and archiving formats which have wrapped the original flags multiple times.
 
 ## Part 1 - S3 Bucket
-The initial challenge leads of with some hints in the terminal and seeding the system with `bucket_finder.rb` which will search AWS S3 for open buckets from a specified wordlist. An example wordlist is provided which does not have the match. The crux of this first part is to construct a wordlist. In the motd banner that welcomes the user to the terminal has highlighed in green some clue text. After adding variations to the wordlist, the open s3 bucket was discoverd.
+The initial challenge leads of with some hints in the terminal and seeding the system with `bucket_finder.rb` which will search AWS S3 for open buckets from a specified wordlist. An example wordlist is provided which does not have the match. The crux of this first part is to construct a wordlist. In the motd banner that welcomes the user to the terminal has highlighed in green some clue text. After adding variations to the wordlist, the open s3 bucket was discovered.
 
 ### wordlist
 ```
@@ -38,7 +37,7 @@ wrapper3000
 
 The open bucket was discovered to be `http://s3.amazonaws.com/wrapper3000/package`
 
-## Unwrapping the Flag
+## Part 2 - Unwrapping the Flag
 The downloaded file is just ascii text as per the output of the `file` command. Looking over the characters, it looks like it might be base64 encoded. This can be verified by piping the output into `base64 -D` (mac) or `base64 -d` (linux). If no errors occur, it was a valid encoding. Doing this, it was seen to be valid base64 encoding of a different file type.
 
 ```bash
