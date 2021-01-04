@@ -21,6 +21,6 @@ Holly Evergreen
 ## Access
 Broadcast the stolen HID code with the following command.
 ```bash
-lf hid sim -r 2006e22ee1
+lf hid sim -r 2006e22f0e
 ```
-![Secret Room Access](img/room.png)
+![Secret Room Access](img/hid_unlock.png)

